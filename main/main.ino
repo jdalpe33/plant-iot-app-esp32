@@ -5,6 +5,7 @@
 
 const char* WIFI_SSID = "richnugs";
 const char* WIFI_PASSWORD = "anto9090909";
+const String DATA_URL = "http://www.plant-iot-app.com/addlog";
 
 const int AIR_BASE_VALUE = 0;
 const int WATER_BASE_VALUE = 0;
@@ -17,8 +18,8 @@ NTPClient timeClient(ntpUDP);
 
 int soilMoisturePercent = -1;
 bool isPumpRunning = false;
-String lastPumpActivationDate = "no activation";
-String currentDate = "no date";
+unsigned long lastPumpActivationEpoch = 0;
+unsigned long  currentEpoch = 0;
 
 void setup(){
   Serial.begin(115200);
@@ -26,17 +27,18 @@ void setup(){
 }
 
 void loop() {
-  
+  Serial.println("BEGIN LOOP\n");
   soilMoisturePercent = getSoilMoisturePercent();
 
-  if(soilMoisturePercent < 50) {
+  if(soilMoisturePercent < 50 && soilMoisturePercent >= 0) {
     startPump();
   } else {
     stopPump();
   }
 
   sendDataToServer();
-  
+
+  Serial.println("END LOOP, WAITING FOR 60 SEC\n");
   delay(60 * 1000); // WAIT FOR 1 MINUTE
 }
 
@@ -63,17 +65,17 @@ bool connectToWifi() {
   }
 
   timeClient.begin();
-  timeClient.setTimeOffset(3600);
+  timeClient.setTimeOffset(3600 * -4);
 
   while(!timeClient.update()) {
     timeClient.forceUpdate();
   }
 
-  currentDate = timeClient.getFormattedTime();
-  Serial.println(currentDate);
+  lastPumpActivationEpoch = timeClient.getEpochTime();
+  Serial.println(lastPumpActivationEpoch);
   
   if(isPumpRunning) {
-    lastPumpActivationDate = currentDate;
+    lastPumpActivationEpoch = currentEpoch;
   }
 
   return true;
@@ -81,9 +83,12 @@ bool connectToWifi() {
 
 String buildJsonData() {
   String json = "{";
-  json += "\"moisture\":" + soilMoisturePercent;
-  json += ",\"isPumpOn\":" + isPumpRunning;
-  json += ",\"lastPumpActivation\":" + lastPumpActivationDate;
+  json += "\"moisture\":";
+  json += soilMoisturePercent;
+  json += ",\"isPumpOn\":";
+  json += isPumpRunning ? "true" : "false";
+  json += ",\"lastPumpActivation\":";
+  json += lastPumpActivationEpoch;
   json += "}";
 
   Serial.print("Built json :");
@@ -99,7 +104,7 @@ void sendDataToServer() {
   if(isConnectedToWifi) {
     HTTPClient http;
  
-    http.begin("http://jsonplaceholder.typicode.com/posts"); //Specify destination for HTTP request
+    http.begin(DATA_URL);//"http://localhost:3000/addlog"); //Specify destination for HTTP request
     http.addHeader("Content-Type", "application/json"); //Specify content-type header
 
     int httpResponseCode = http.POST(buildJsonData()); //Send the actual POST request
@@ -131,7 +136,7 @@ int getSoilMoisturePercent() {
 
 void startPump() {
   Serial.println("START PUMP");
-  lastPumpActivationDate = currentDate;
+  lastPumpActivationEpoch = currentEpoch;
   isPumpRunning = true;
   digitalWrite(PUMP_RELAY_PIN, HIGH);
 }
