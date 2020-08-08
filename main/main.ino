@@ -9,7 +9,7 @@
 TimeManager timeManager;
 SensorManager sensorManager;
 PlantInformation* plantInformation;
-Relay relay(0);
+Relay relay(2);
 WateringCycle wateringCycle;
 WifiManager wifiManager;
 ServerManager serverManager;
@@ -34,8 +34,16 @@ void loop() {
   plantInformation->soilMoistureValue = sensorManager.getSoilMoisture();
   plantInformation->temperatureValue = sensorManager.getTemperature();
 
-  if(plantInformation->soilMoistureValue < 25) {
+  if(plantInformation->soilMoistureValue < 0) {
     wateringCycle.start();
+  }
+
+  if(serverManager.gotStartRequest()) {
+    wateringCycle.start();
+  }
+
+  if(serverManager.gotStopRequest()) {
+    wateringCycle.stop();
   }
 
   wateringCycle.update();

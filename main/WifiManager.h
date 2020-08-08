@@ -5,8 +5,8 @@
 
 class WifiManager {
   private:
-    const char* WIFI_SSID = "895-7";
-    const char* WIFI_PASSWORD = "4385808285";
+    const char* WIFI_SSID = "richnugs";
+    const char* WIFI_PASSWORD = "anto9090909";
   public:
     bool connectToWifi();
     bool isConnected();

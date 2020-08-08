@@ -11,8 +11,8 @@ class SensorManager {
     int getTemperature();
     void readSensors();
   private:
-    Sensor* soilMoistureSensor = new SoilMoistureSensor (15);
-    Sensor* temperatureSensor = new TemperatureSensor (0);
+    Sensor* soilMoistureSensor = new SoilMoistureSensor (35);
+    Sensor* temperatureSensor = new TemperatureSensor (34);
 };
 
 void SensorManager::readSensors() {
