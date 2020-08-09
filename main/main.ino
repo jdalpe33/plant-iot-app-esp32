@@ -38,12 +38,14 @@ void loop() {
     wateringCycle.start();
   }
 
-  if(serverManager.gotStartRequest()) {
-    wateringCycle.start();
-  }
-
-  if(serverManager.gotStopRequest()) {
-    wateringCycle.stop();
+  if(wifiManager.isConnected()) {
+    if(serverManager.gotStartRequest()) {
+      wateringCycle.start();
+    }
+  
+    if(serverManager.gotStopRequest()) {
+      wateringCycle.stop();
+    }
   }
 
   wateringCycle.update();
