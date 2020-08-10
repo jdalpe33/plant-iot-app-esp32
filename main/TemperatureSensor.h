@@ -7,21 +7,21 @@
 
 class TemperatureSensor : public Sensor {
   private:
-    OneWire oneWire;
-    DallasTemperature sensors;
+    OneWire* oneWire;
+    DallasTemperature* sensors;
   public:
     TemperatureSensor(int sensorPin) {
-      oneWire = OneWire(sensorPin);
-      sensors = DallasTemperature(&oneWire);    
+      oneWire = new OneWire(sensorPin);
+      sensors = new DallasTemperature(oneWire);    
       
-      sensors.begin();
+      sensors->begin();
     }
     void readValue();
 };
 
 void TemperatureSensor::readValue() {
-  sensors.requestTemperatures();
-  value = sensors.getTempCByIndex(0);
+  sensors->requestTemperatures();
+  value = sensors->getTempCByIndex(0);
 }
 
 #endif

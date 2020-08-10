@@ -27,6 +27,8 @@ boolean ServerManager::gotStartRequest() {
       return false;
     }
   }
+
+  return false;
 }
 boolean ServerManager::gotStopRequest() {
   HTTPClient http;
@@ -43,6 +45,8 @@ boolean ServerManager::gotStopRequest() {
       return false;
     }
   }
+
+  return false;
 }
 
 boolean ServerManager::sendData(String data) {
@@ -63,6 +67,7 @@ boolean ServerManager::sendData(String data) {
     Serial.println(httpResponseCode);
     return false;
   }
+  
 }
 
 #endif

@@ -9,7 +9,7 @@
 TimeManager timeManager;
 SensorManager sensorManager;
 PlantInformation* plantInformation;
-Relay relay(2);
+Relay relay(14);
 WateringCycle wateringCycle;
 WifiManager wifiManager;
 ServerManager serverManager;
@@ -66,5 +66,5 @@ void loop() {
   }
 
   Serial.println("END LOOP\n");
-  delay(10 * 1000);
+  delay(5 * 1000);
 }
