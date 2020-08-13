@@ -9,7 +9,7 @@
 TimeManager timeManager;
 SensorManager sensorManager;
 PlantInformation* plantInformation;
-Relay relay(14);
+Relay relay(33);
 WateringCycle wateringCycle;
 WifiManager wifiManager;
 ServerManager serverManager;
@@ -33,6 +33,7 @@ void loop() {
   sensorManager.readSensors();
   plantInformation->soilMoistureValue = sensorManager.getSoilMoisture();
   plantInformation->temperatureValue = sensorManager.getTemperature();
+  plantInformation->epoch = timeManager.getCurrentEpoch();
 
   if(plantInformation->soilMoistureValue < 0) {
     wateringCycle.start();
@@ -52,8 +53,6 @@ void loop() {
 
   if(wateringCycle.isRunning) {
     plantInformation->isPumpRunning = true;
-    plantInformation->lastPumpActivationEpoch = timeManager.getCurrentEpoch();
-    
     relay.close();
   } else {
     plantInformation->isPumpRunning = false;

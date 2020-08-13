@@ -6,14 +6,14 @@ class PlantInformation {
     int temperatureValue;
     int soilMoistureValue;
     bool isPumpRunning;
-    unsigned long lastPumpActivationEpoch;
+    unsigned long epoch;
   
     String toJson();
     PlantInformation() {
       this->temperatureValue = 0;
       this->soilMoistureValue = 0;
       this->isPumpRunning = false;
-      this->lastPumpActivationEpoch = 0;
+      this->epoch = 0;
     }
 };
 
@@ -25,9 +25,11 @@ String PlantInformation::toJson() {
   json += temperatureValue;
   json += ",\"isPumpOn\":";
   json += isPumpRunning ? "true" : "false";
-  json += ",\"lastPumpActivation\":";
-  json += lastPumpActivationEpoch;
+  json += ",\"epoch\":";
+  json += epoch;
   json += "}";
+
+  Serial.println(json);
 
   return json;
 }
